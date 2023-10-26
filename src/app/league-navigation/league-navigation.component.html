@@ -1,0 +1,45 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Navbar brand -->
+    <a class="navbar-brand" href="/">Football Updates</a>
+
+    <!-- Toggle button -->
+    <button class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0"> <!--TODO aand remove #-->
+        <li class="nav-item">
+          <a class="nav-link active" id="englandSelect" #england (click)="onLeagueClick(england.id)" aria-current="page">England</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" id="spainSelect" #spain (click)="onLeagueClick(spain.id)" aria-current="page">Spain</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" id="germanySelect" #germany (click)="onLeagueClick(germany.id)" aria-current="page">Germany</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" id="franceSelect" #france (click)="onLeagueClick(france.id)" aria-current="page">France</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" id="italySelect" #italy (click)="onLeagueClick(italy.id)" aria-current="page">Italy</a>
+        </li>
+      </ul>
+      <!-- Left links -->
+    </div>
+    <!-- Collapsible wrapper -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->

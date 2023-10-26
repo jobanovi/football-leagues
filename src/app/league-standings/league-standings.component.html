@@ -1,0 +1,28 @@
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col">Name</th>
+    <th scope="col">W</th>
+    <th scope="col">L</th>
+    <th scope="col">D</th>
+    <th scope="col">Goal Difference</th>
+    <th scope="col">Points</th>
+  </tr>
+  </thead>
+  <tbody>
+  <ng-container *ngFor="let standing of standingsArray; index as i;"> <!-- TODO see if ng-container is ok here-->
+    <tr>
+      <td>{{i + 1}}</td>
+      <td><img [src]="standing.team.logo" alt="Team logo" class="img-fluid" style="width:20px;height:20px;"/></td> <!-- TODO see if style should be in styles file-->
+      <td><a routerLink="team/{{standing.team.id}}"><span>{{standing.team.name}}</span></a></td>
+      <td>{{standing.all.win}}</td>
+      <td>{{standing.all.lose}}</td>
+      <td>{{standing.all.draw}}</td>
+      <td>{{standing.goalsDiff}}</td>
+      <td>{{standing.points}}</td>
+    </tr>
+  </ng-container>
+  </tbody>
+</table>
