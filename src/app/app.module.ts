@@ -9,7 +9,6 @@ import {LeagueStandingsComponent} from './league-standings/league-standings.comp
 import {AppRoutingModule} from "./app-routing.module";
 import {AuthorizationInterceptor} from "./interceptors/http-request-interceptor.service";
 import {CachingInterceptor} from "./interceptors/caching.interceptor";
-import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +16,6 @@ import { NotFoundComponent } from './not-found/not-found.component';
     LeagueNavigationComponent,
     TeamScoresComponent,
     LeagueStandingsComponent,
-    NotFoundComponent
   ],
   imports: [
     BrowserModule,

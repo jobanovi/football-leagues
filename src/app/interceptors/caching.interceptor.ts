@@ -7,7 +7,7 @@ import {RateLimitHandlingService} from "../services/rate-limit-handling.service"
 export class CachingInterceptor implements HttpInterceptor {
 
   private static requestCache: Map<string, TimeTrackingHttpResponse> = new Map<string, TimeTrackingHttpResponse>();
-  private static timeInCacheINMIn: number = 10; // retrieve data from server every 10 min
+  private static timeInCacheINMIn: number = 30; // retrieve data from server every 30 min
 
   constructor(private rateLimitHandlingService: RateLimitHandlingService ) {}
 

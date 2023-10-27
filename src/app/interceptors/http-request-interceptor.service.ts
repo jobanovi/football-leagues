@@ -2,14 +2,14 @@ import {Injectable} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {RateLimitHandlingService} from "../services/rate-limit-handling.service";
-import {KeyInfo, KeyProvider} from "../services/key-provider.service";
+import {KeyInfo, KeyProviderService} from "../services/key-provider.service";
 
 @Injectable()
 export class AuthorizationInterceptor implements HttpInterceptor {
 
   private keyInfo: KeyInfo;
 
-  constructor(private keyProvider: KeyProvider) {
+  constructor(private keyProvider: KeyProviderService) {
     this.keyInfo = keyProvider.getValidKey();
   }
 

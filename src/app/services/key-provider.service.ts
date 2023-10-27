@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
-export class KeyProvider {
+export class KeyProviderService {
 
-  private readonly keys: KeyInfo[] = [{key: "a0efa8d3ccc54bd4d678b69fd4e67480", isValid: true},
-    {key: "0700862f2c8329dd671a20b8c96e58bb", isValid: true}]; // todo key
+  private readonly keys: KeyInfo[] = [{key: "2b1404d1ca10c9f47715c89318432cad", isValid: true},
+    {key: "0700862f2c8329dd671a20b8c96e58bb", isValid: true},
+    {key: "a0efa8d3ccc54bd4d678b69fd4e67480", isValid: true}];
 
   /**
    * Gets first valid key or, if all are invalid, first one
