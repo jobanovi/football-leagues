@@ -23,7 +23,7 @@ import {CachingInterceptor} from "./interceptors/caching.interceptor";
     AppRoutingModule
   ],
   providers: [
-    // {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
