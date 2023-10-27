@@ -9,7 +9,6 @@ import {LeagueStandingsComponent} from './league-standings/league-standings.comp
 import {AppRoutingModule} from "./app-routing.module";
 import {AuthorizationInterceptor} from "./interceptors/http-request-interceptor.service";
 import {CachingInterceptor} from "./interceptors/caching.interceptor";
-import {RateLimitInterceptor} from "./interceptors/rate-limit.interceptor";
 
 @NgModule({
   declarations: [
@@ -26,7 +25,6 @@ import {RateLimitInterceptor} from "./interceptors/rate-limit.interceptor";
   providers: [
     // {provide: HTTP_INTERCEPTORS, useClass: CachingInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: RateLimitInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })

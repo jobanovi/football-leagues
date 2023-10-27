@@ -30,7 +30,7 @@ export class CachingInterceptor implements HttpInterceptor {
       tap(event => {
         if (event instanceof HttpResponse) {
           console.log("Caching response: " + event);
-          CachingInterceptor.requestCache.set(request.urlWithParams, new TimeTrackingHttpResponse(event, 10)); // todo check if alements are updated
+          CachingInterceptor.requestCache.set(request.urlWithParams, new TimeTrackingHttpResponse(event, 10)); // TODO cnstant for minutes
         }
       })
     );

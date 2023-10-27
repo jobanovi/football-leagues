@@ -1,11 +1,10 @@
 import {Component, Input, OnChanges, SimpleChange, SimpleChanges} from '@angular/core';
-import {Standing} from "../models/league-standings-model";
 import {TeamService} from "../services/team.service";
 import {FixtureModel} from "../models/fixture-model";
 import {Router} from "@angular/router";
 import {TeamScoresRequest} from "../services/team-scores-request";
-import {RateLimitModel} from "../models/rate-limit-model";
 import {HttpHeaders} from "@angular/common/http";
+import {RateLimitHandlingService} from "../services/rate-limit-handling.service";
 
 @Component({
   selector: 'app-team-scores',
@@ -22,7 +21,7 @@ export class TeamScoresComponent implements OnChanges {
 
   gamesScores: GameScore[] = [];
 
-  constructor(private teamService: TeamService, private router: Router) {
+  constructor(private teamService: TeamService, private router: Router, private rateLimitHandlingService: RateLimitHandlingService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -35,41 +34,46 @@ export class TeamScoresComponent implements OnChanges {
   }
 
   getTeamScores(teamScoresRequest: TeamScoresRequest): void {
-    this.teamService.getScores(teamScoresRequest).subscribe(sc => {
-      // for some reason football api returns different json model for errors when rate limit reached
-      const rateLimitModel: RateLimitModel = JSON.parse(JSON.stringify(sc)) as RateLimitModel; // TODO avoid double parse and stringify
-      if (!Array.isArray(rateLimitModel.errors)) { // TODO move to service
-        // alert("Unable to provide new results");
-        console.error(rateLimitModel.errors);
-        const customHeaders: HttpHeaders = new HttpHeaders().set("switch-key", 'true');
-        this.getTeamScores({leagueId: teamScoresRequest.leagueId, teamId: teamScoresRequest.teamId, customHeaders: customHeaders});
-        return;
-      }
+    this.teamService.getScores(teamScoresRequest).subscribe({
+      next: (sc: string) => {
+        // for some reason football api returns different json model for errors when rate limit reached
+        if (this.rateLimitHandlingService.isRateLimitIssue(sc)) {
+          this.getTeamScores({
+            leagueId: teamScoresRequest.leagueId,
+            teamId: teamScoresRequest.teamId,
+            customHeaders: new HttpHeaders().set(RateLimitHandlingService.switchKeyHeaderName, RateLimitHandlingService.switchKeyHeaderValue)
+          });
+          return;
+        }
 
-      const fixtureData: FixtureModel = JSON.parse(JSON.stringify(sc)) as FixtureModel; // TODO test if it works without stringify and maybe add reviewer to parser
-      fixtureData.response.forEach(response => {
-        const gameScore: GameScore = new GamesScoreBuilder()
-          .addHomeTeam(response.teams.home.name)
-          .addAwayTeam(response.teams.away.name)
-          .addHomeTeamLogo(response.teams.home.logo)
-          .addAwayTeamLogo(response.teams.away.logo)
-          .addHomeTeamGoals(response.goals.home)
-          .addAwayTeamGoals(response.goals.away)
-          .addDate(new Date(response.fixture.date))
-          .build();
+        const fixtureData: FixtureModel = JSON.parse(JSON.stringify(sc)) as FixtureModel;
+        fixtureData.response.forEach(response => {
+          const gameScore: GameScore = new GamesScoreBuilder()
+            .addHomeTeam(response.teams.home.name)
+            .addAwayTeam(response.teams.away.name)
+            .addHomeTeamLogo(response.teams.home.logo)
+            .addAwayTeamLogo(response.teams.away.logo)
+            .addHomeTeamGoals(response.goals.home)
+            .addAwayTeamGoals(response.goals.away)
+            .addDate(new Date(response.fixture.date))
+            .build();
 
-        this.gamesScores.push(gameScore);
-      })
+          this.gamesScores.push(gameScore);
+        })
 
-      // filtering with query params didn't work so filtering here
-      this.gamesScores = this.gamesScores.filter(gs => gs.date <= new Date())
-        .slice(0, 10)
-        .sort((gs1, gs2) => gs2.date.getTime() - gs1.date.getTime());
+        // filtering with query params didn't work so filtering here
+        this.gamesScores = this.gamesScores.filter(gs => gs.date <= new Date())
+          .slice(0, 10)
+          .sort((gs1, gs2) => gs2.date.getTime() - gs1.date.getTime());
 
-      console.log(this.gamesScores);
+        console.log(this.gamesScores);
 
-    }); // TODO handle error and complete
+      },
+      error: (e) => console.error("Error while getting team score " + e),
+      complete: () => console.info('Complete receiving team scores')
+    });
   }
+
 
   onBackButtonClick() {
     const url: string = "/leagues/" + this.lid;
@@ -107,13 +111,13 @@ class GameScore {
 
 class GamesScoreBuilder {
 
-  private _homeTeam?: string;
-  private _awayTeam?: string;
-  private _homeTeamLogo?: string;
-  private _awayTeamLogo?: string;
-  private _homeTeamGoals?: number;
-  private _awayTeamGoals?: number;
-  private _date?: Date;
+  private _homeTeam!: string;
+  private _awayTeam!: string;
+  private _homeTeamLogo!: string;
+  private _awayTeamLogo!: string;
+  private _homeTeamGoals!: number;
+  private _awayTeamGoals!: number;
+  private _date!: Date;
 
   addHomeTeam(homeTeam: string): GamesScoreBuilder {
     this._homeTeam = homeTeam;
@@ -150,56 +154,35 @@ class GamesScoreBuilder {
     return this;
   }
 
-  // todo remove typeassertions and do it better
   get homeTeam(): string {
-    return <string>this._homeTeam;
+    return this._homeTeam;
   }
 
   get awayTeam(): string {
-    return <string>this._awayTeam;
+    return this._awayTeam;
   }
 
   get homeTeamLogo(): string {
-    return <string>this._homeTeamLogo;
+    return this._homeTeamLogo;
   }
 
   get awayTeamLogo(): string {
-    return <string>this._awayTeamLogo;
+    return this._awayTeamLogo;
   }
 
   get homeTeamGoals(): number {
-    return <number>this._homeTeamGoals;
+    return this._homeTeamGoals;
   }
 
   get awayTeamGoals(): number {
-    return <number>this._awayTeamGoals;
+    return this._awayTeamGoals;
   }
 
   get date(): Date {
-    return <Date>this._date;
+    return this._date;
   }
 
   build(): GameScore {
-    // check if null or undefined
-    // if (this._homeTeam == null||
-    //   this._awayTeam == null ||
-    //   this._homeTeamLogo == null ||
-    //   this._awayTeamLogo == null ||
-    //   this._homeTeamGoals == null ||
-    //   this._awayTeamGoals == null ||
-    //   this._date == null) {
-    //   console.warn("All the GamesScore fields should be set");
-    //
-    //   // goals are null for games
-    //   if (this._homeTeamGoals === null) {
-    //     this._homeTeamGoals = 0;
-    //   }
-    //
-    //   if (this._awayTeamGoals === null) {
-    //     this._awayTeamGoals = 0;
-    //   }
-    // }
-
     return new GameScore(this);
   }
 
