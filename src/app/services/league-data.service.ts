@@ -5,6 +5,8 @@ import {Injectable} from '@angular/core';
 })
 export class LeagueDataService {
 
+  public static season: number = new Date().getFullYear();
+
   private readonly leagueNamesAndIds: Map<string, number> = new Map<string, number>([
     ["england", 39],
     ["spain", 140],
@@ -16,7 +18,6 @@ export class LeagueDataService {
 
   getLeagueIdFor(leagueName: string): number {
     if (!this.leagueNamesAndIds.has(leagueName)) {
-      alert("Invalid league name provided: " + leagueName); // TODO check if alert or error can be removed
       throw new Error("Invalid league name provided: " + leagueName);
     }
 

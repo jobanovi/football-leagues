@@ -12,10 +12,10 @@
   </tr>
   </thead>
   <tbody>
-  <ng-container *ngFor="let standing of standingsArray; index as i;"> <!-- TODO see if ng-container is ok here-->
+  <ng-container *ngFor="let standing of standingsArray; index as i;">
     <tr>
       <td>{{i + 1}}</td>
-      <td><img [src]="standing.team.logo" alt="Team logo" class="img-fluid" style="width:20px;height:20px;"/></td> <!-- TODO see if style should be in styles file-->
+      <td><img [src]="standing.team.logo" alt="Team logo" class="img-fluid" style="width:20px;height:20px;"/></td>
       <td><a routerLink="team/{{standing.team.id}}"><span>{{standing.team.name}}</span></a></td>
       <td>{{standing.all.win}}</td>
       <td>{{standing.all.lose}}</td>

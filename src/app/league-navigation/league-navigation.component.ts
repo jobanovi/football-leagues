@@ -12,7 +12,7 @@ export class LeagueNavigationComponent {
   constructor(private router: Router, private leagueData: LeagueDataService) {
   }
 
-  onLeagueClick(id: string) {
+  onLeagueClick(id: string): void {
       const leagueName: string = id.substring(0, id.indexOf("Select"));
       const url: string = "/leagues/" + this.leagueData.getLeagueIdFor(leagueName).toString();
       this.router.navigateByUrl(url).then(

@@ -1,13 +1,13 @@
 <table class="table table-striped">
   <tbody>
-  <ng-container *ngFor="let score of gamesScores"> <!-- TODO see if ng-container is ok here-->
+  <ng-container *ngFor="let score of gamesScores">
     <tr>
-      <td><img [src]="score.homeTeamLogo" alt="Team logo" class="img-fluid" style="width:20px;height:20px;"/></td> <!-- TODO see if style should be in styles file-->
+      <td><img [src]="score.homeTeamLogo" alt="Team logo" class="img-fluid" style="width:20px;height:20px;"/></td>
       <td>{{score.homeTeam}}</td>
       <td>{{score.homeTeamGoals}}</td>
       <td>{{score.awayTeamGoals}}</td>
       <td>{{score.awayTeam}}</td>
-      <td><img [src]="score.awayTeamLogo" alt="Team logo" class="img-fluid" style="width:20px;height:20px;"/></td> <!-- TODO see if style should be in styles file-->
+      <td><img [src]="score.awayTeamLogo" alt="Team logo" class="img-fluid" style="width:20px;height:20px;"/></td>
     </tr>
   </ng-container>
   </tbody>
