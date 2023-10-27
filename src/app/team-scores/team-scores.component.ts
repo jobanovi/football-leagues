@@ -74,7 +74,6 @@ export class TeamScoresComponent implements OnChanges {
     });
   }
 
-
   onBackButtonClick() {
     const url: string = "/leagues/" + this.lid;
     this.router.navigateByUrl(url).then(

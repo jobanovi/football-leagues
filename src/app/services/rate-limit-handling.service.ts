@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {RateLimitModel} from "../models/rate-limit-model";
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +15,10 @@ export class RateLimitHandlingService {
 
   isRateLimitIssue(rateLimit: string): boolean {
     try {
-      const rateLimitModel: RateLimitModel = JSON.parse(JSON.stringify(rateLimit)) as RateLimitModel;
-      if (!Array.isArray(rateLimitModel.errors)
-        && (rateLimitModel.errors.rateLimit.includes(RateLimitHandlingService.rateLimitDayMsg)
-          || rateLimitModel.errors.rateLimit.includes(RateLimitHandlingService.rateLimitMinuteMsg))) {
-        // alert("Unable to provide new results");
-        console.error(rateLimitModel.errors);
+      // unfortunately, rate limit json models are not the same so using just json string to check
+      const rateModelJson: string = JSON.stringify(rateLimit);
+      if (rateModelJson.includes(RateLimitHandlingService.rateLimitMinuteMsg)
+        || rateModelJson.includes(RateLimitHandlingService.rateLimitDayMsg)) {
         return true
       }
     } catch (e) {

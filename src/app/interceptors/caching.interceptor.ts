@@ -1,11 +1,7 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor, HttpResponse
-} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Observable, of, tap} from 'rxjs';
+import {RateLimitHandlingService} from "../services/rate-limit-handling.service";
 
 @Injectable()
 export class CachingInterceptor implements HttpInterceptor {
@@ -13,7 +9,7 @@ export class CachingInterceptor implements HttpInterceptor {
   private static requestCache: Map<string, TimeTrackingHttpResponse> = new Map<string, TimeTrackingHttpResponse>();
   private static timeInCacheINMIn: number = 10; // retrieve data from server every 10 min
 
-  constructor() {}
+  constructor(private rateLimitHandlingService: RateLimitHandlingService ) {}
 
   // type parameter is the body type and body in request is null
   intercept(request: HttpRequest<null>, next: HttpHandler): Observable<HttpEvent<string>> {
@@ -28,8 +24,10 @@ export class CachingInterceptor implements HttpInterceptor {
   sendRequest(request: HttpRequest<null>, next: HttpHandler): Observable<HttpEvent<string>> {
     return next.handle(request).pipe(
       tap(event => {
-        if (event instanceof HttpResponse) {
-          console.log("Caching response: " + event);
+        if ((event instanceof HttpResponse)
+          && (event.status >= 200 && event.status < 300)
+          && !this.rateLimitHandlingService.isRateLimitIssue(JSON.stringify(event))) {
+          console.log("Caching response: " + JSON.stringify(event));
           CachingInterceptor.requestCache.set(request.urlWithParams, new TimeTrackingHttpResponse(event, CachingInterceptor.timeInCacheINMIn));
         }
       })

@@ -7,7 +7,8 @@ import {NotFoundComponent} from "./not-found/not-found.component";
 const routes: Routes = [
   {path: "leagues/:lid", component: LeagueStandingsComponent},
   {path: "leagues/:lid/team/:tid", component: TeamScoresComponent},
-  {path: '**', component: NotFoundComponent}
+  // {path: "", redirectTo: '#', pathMatch: 'full'},
+  // {path: '**', component: NotFoundComponent} TODO
 ];
 
 @NgModule({
