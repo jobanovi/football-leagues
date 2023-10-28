@@ -1,17 +1,18 @@
-import {Component, Input, OnChanges, SimpleChange, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, SimpleChange, SimpleChanges} from '@angular/core';
 import {TeamService} from "../services/team.service";
 import {FixtureModel} from "../models/fixture-model";
 import {Router} from "@angular/router";
 import {TeamScoresRequest} from "../services/team-scores-request";
 import {HttpHeaders} from "@angular/common/http";
 import {RateLimitHandlingService} from "../services/rate-limit-handling.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-team-scores',
   templateUrl: './team-scores.component.html',
   styleUrls: ['./team-scores.component.css']
 })
-export class TeamScoresComponent implements OnChanges {
+export class TeamScoresComponent implements OnChanges, OnDestroy {
 
   @Input()
   lid!: number; // input done from url
@@ -20,6 +21,8 @@ export class TeamScoresComponent implements OnChanges {
   tid!: number; // input done from url
 
   gamesScores: GameScore[] = [];
+
+  subscription?: Subscription;
 
   constructor(private teamService: TeamService, private router: Router, private rateLimitHandlingService: RateLimitHandlingService) {
   }
@@ -34,7 +37,7 @@ export class TeamScoresComponent implements OnChanges {
   }
 
   getTeamScores(teamScoresRequest: TeamScoresRequest): void {
-    this.teamService.getScores(teamScoresRequest).subscribe({
+    this.subscription = this.teamService.getScores(teamScoresRequest).subscribe({
       next: (sc: string) => {
         // for some reason football api returns different json model for errors when rate limit reached
         if (this.rateLimitHandlingService.isRateLimitIssue(sc)) {
@@ -84,6 +87,10 @@ export class TeamScoresComponent implements OnChanges {
         console.error("Error while navigating to url " + url + ", " + err);
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }
 

@@ -1,13 +1,15 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {LeagueStandingsRequest} from "./league-standings-request";
 import {LeagueDataService} from "./league-data.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class LeagueService {
+export class LeagueService implements OnDestroy{
+
+  subscription?: Subscription;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -17,5 +19,9 @@ export class LeagueService {
       params: {league: leagueStandingsRequest.leagueId, season: LeagueDataService.season},
       headers: leagueStandingsRequest.customHeaders
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }
