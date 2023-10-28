@@ -5,15 +5,13 @@ import {Injectable} from '@angular/core';
 })
 export class KeyProviderService {
 
-  // invalid keys: 2b1404d1ca10c9f47715c89318432cad 0700862f2c8329dd671a20b8c96e58bb a0efa8d3ccc54bd4d678b69fd4e67480
-  //
-  private readonly keys: KeyInfo[] = [{key: "516499c256cbdf600f3adacb3105be04", isValid: true}];
+  private readonly keys: KeyInfo[] = [{key: "516499c256cbdf600f3adacb3105be04", isValid: true},
+    {key: "b8759137ab1467a92444b104a8e33ad3", isValid: true}];
 
   /**
    * Gets first valid key or, if all are invalid, first one because most probably rate limit has expired for that one
    */
   getValidKey(): KeyInfo {
-    console.log("getting another valid key");
     const validKey: KeyInfo | undefined = this.keys.find(k => k.isValid);
     if (!validKey) {
       // mark all keys as valid to avoid marking key as invalid even though rate limit expired (especially for minute)

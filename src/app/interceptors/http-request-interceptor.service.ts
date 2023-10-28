@@ -19,6 +19,7 @@ export class AuthorizationInterceptor implements HttpInterceptor {
     if (request.headers.has(RateLimitHandlingService.switchKeyHeaderName)) {
       // update existing key
       this.keyProvider.updateKey({key: this.keyInfo.key, isValid: false});
+      console.log("getting another valid key");
       // get another key
       this.keyInfo = this.keyProvider.getValidKey();
       reqClone = request.clone({
