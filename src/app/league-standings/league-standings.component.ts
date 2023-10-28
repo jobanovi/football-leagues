@@ -1,21 +1,24 @@
-import {Component, Input, OnChanges, SimpleChange, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, SimpleChange, SimpleChanges} from '@angular/core';
 import {LeagueStandingsModel, Standing} from "../models/league-standings-model";
 import {LeagueService} from "../services/league.service";
 import {HttpHeaders} from "@angular/common/http";
 import {RequestContext} from "../services/request-context";
 import {RateLimitHandlingService} from "../services/rate-limit-handling.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-league-standings',
   templateUrl: './league-standings.component.html',
   styleUrls: ['./league-standings.component.css'],
 })
-export class LeagueStandingsComponent implements OnChanges {
+export class LeagueStandingsComponent implements OnChanges, OnDestroy {
 
   @Input()
   lid!: number; // input done from url
 
   standingsArray?: Standing[]
+
+  subscription?: Subscription;
 
   constructor(private leagueService: LeagueService, private rateLimitHandlingService: RateLimitHandlingService) {
   }
@@ -29,7 +32,7 @@ export class LeagueStandingsComponent implements OnChanges {
   }
 
   getLeagueStandings(leagueStandingsRequest: RequestContext): void {
-    this.leagueService.getStandings(leagueStandingsRequest).subscribe({
+   this.subscription =  this.leagueService.getStandings(leagueStandingsRequest).subscribe({
       next: (ls: string) => {
         // for some reason football api returns different json model for errors when rate limit reached
         if (this.rateLimitHandlingService.isRateLimitIssue(ls)) {
@@ -61,6 +64,10 @@ export class LeagueStandingsComponent implements OnChanges {
       error: (e) => console.error("Error while getting league standings " + e),
       complete: () => console.info('Complete receiving league standings')
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
 }
